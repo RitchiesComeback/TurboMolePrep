@@ -169,13 +169,14 @@ If the value of the `ri` option is of type `String`, it is a shorthand for the f
     "type": <value>
 }
 ```
-where `<value>` is the string given to the `ri` option.
+where `<value>` is the string given to the `ri` option. F
 
 If `ri` is directly given a nested JSON object, then this object can have the following options set:
 | **Name** | **Description** | **Type** | **Default** |
 | -------- | --------------- | -------- | ----------- |
 | `type` | Which integrals to decompose | `String` (see below) | `Coulomb` |
 | `multipole_acceleration` | Whether to enable use of mulitpole acceleration (`marij`) for the Coulomb contributions | `Boolean` | `true` |
+| `memory` | The amount of memory that is available to RI (in Mb) | `Integer` | `500` |
 
 `type` decides whether to only apply RI for Coulomb-like contributions or whether to also apply them to exchange-like contributions. The allowed
 keywords and their effect are (case-insensitive and space-insensitive)
@@ -227,6 +228,23 @@ If `x2c` is specified as a nested JSON object, the following options are availab
 | `enable` | Whether to enable X2C | Boolean | `false` |
 | `local_approx` | Whether to use the local approximation (DLU) for the decoupling | Boolean | `true` |
 | `picture_change_corr` | Whether to enable a picture-change-correction for expectation values | Boolean  | `true` |
+
+#### population analysis
+
+If the `pop_analysis` option is set, the stated method will be performed. The minimal set up is:
+```json
+"pop_analysis": {
+    "enable": true,
+    "method": <value>
+}
+```
+where `<value>` is the string given to the `pop_analysis` option.
+
+If `pop_analysis` is specified as a nested JSON object, the following options are available:
+| **Name** | **Description** | **Type** | **Default** |
+| -------- | --------------- | -------- | ----------- |
+| `enable` | Whether to enable population analysis | Boolean | `false` |
+| `method` | Certain method for the population analysis (PA), availabe are Mulliken PA `mul`, Loewdin PA `low`, natural PA `nbo`, PA basen on occupation numbers `pab`, Wiberg bond indices `wbi` and all of the beforementioned methods `all` | String | `None` |
 
 
 ### generic
