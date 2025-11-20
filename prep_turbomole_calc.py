@@ -218,15 +218,15 @@ def configure_geometry(process: pexpect.spawn, params: Dict[str, Any]):
         print("Detected symmetry: {}".format(sym))
         process.expect(end_of_prompt)
 
-    use_interals = params["molecule"].get("use_internal_coords", True)
+    use_internals = params["molecule"].get("use_internal_coords", True)
 
-    if use_interals:
+    if use_internals:
         process.sendline("ired")
         process.expect(end_of_prompt)
 
     process.sendline("*")
 
-    if not use_interals:
+    if not use_internals:
         # Confirm that we indeed do not want internal coordinates
         process.expect(internal_coord_prompt)
         process.sendline("no")
