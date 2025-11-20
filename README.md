@@ -176,7 +176,7 @@ If `ri` is directly given a nested JSON object, then this object can have the fo
 | -------- | --------------- | -------- | ----------- |
 | `type` | Which integrals to decompose | `String` (see below) | `Coulomb` |
 | `multipole_acceleration` | Whether to enable use of mulitpole acceleration (`marij`) for the Coulomb contributions | `Boolean` | `true` |
-| `memory` | The amount of memory that is available to RI (in Mb) | `Integer` | `500` |
+| `memory` | The amount of memory that is available to RI (in Mb) for the storage of RI matrices and for RI-integrals | `Integer` | `500` |
 
 `type` decides whether to only apply RI for Coulomb-like contributions or whether to also apply them to exchange-like contributions. The allowed
 keywords and their effect are (case-insensitive and space-insensitive)
