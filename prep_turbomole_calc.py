@@ -546,7 +546,7 @@ def configure_ri_parameters(process: pexpect.spawn, params: Dict[str, Any]):
     marij_option = r"threshold for multipole neglect"
 
     ri_type: str = params.get("type", "ri").lower().replace(" ", "")
-    ri_memory: int = params.get("memory")
+    ri_memory: Optional[int] = params.get("memory")
 
     # Handle ri_type synonyms
     if ri_type in ["j", "coulomb", "rij"]:
