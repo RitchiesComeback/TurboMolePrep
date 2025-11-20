@@ -50,7 +50,7 @@ param_types = {
         "x2c": [bool, x2c_options],
         "pop_analysis": [bool, pop_options],
         "generic": {array_type_key: str},
-        "ri": [str, {"type": str, "multipole_acceleration": bool}],
+        "ri": [str, {"type": str, "multipole_acceleration": bool, "memory": int}],
     },
 }
 
@@ -546,6 +546,7 @@ def configure_ri_parameters(process: pexpect.spawn, params: Dict[str, Any]):
     marij_option = r"threshold for multipole neglect"
 
     ri_type: str = params.get("type", "ri").lower().replace(" ", "")
+    ri_memory: int = params.get("memory")
 
     # Handle ri_type synonyms
     if ri_type in ["j", "coulomb", "rij"]:
@@ -569,6 +570,10 @@ def configure_ri_parameters(process: pexpect.spawn, params: Dict[str, Any]):
     if not ri_active:
         raise RuntimeError("Failed to enable RI (type: '{}')".format(ri_type))
 
+    if ri_memory is not None:
+        process.sendline(f"m {ri_memory}")
+        process.expect(ri_headline)
+    
     # Exit RI menu
     process.sendline("")
 
