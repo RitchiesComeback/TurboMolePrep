@@ -34,6 +34,7 @@ cosmo_options = {
     "epsilon": [float, str]
 }
 basis_set_options = {default_key: str, "use_ecp": bool}
+pop_options = {"enable": bool, "method": str}
 x2c_options = {"enable": bool, "local_approx": bool, "picture_change_corr": bool}
 
 param_types = {
@@ -47,6 +48,7 @@ param_types = {
         "finite_nucleus": bool,
         "max_scf_iterations": int,
         "x2c": [bool, x2c_options],
+        "pop_analysis": [bool, pop_options],
         "generic": {array_type_key: str},
         "ri": [str, {"type": str, "multipole_acceleration": bool}],
     },
@@ -612,6 +614,36 @@ def configure_x2c_parameter(process: pexpect.spawn, params: Dict[str, Any]):
     process.sendline("")
 
 
+def configure_pop_parameter(process: pexpect.spawn, params: Dict[str, Any]):
+    if not params.get("enable", False):
+        return
+
+    pop_method: str = params.get("method").lower().replace(" ", "")
+
+    prop_submenu = r"CURRENT STATUS OF PROPERTY KEYWORDS:"
+    pop_question = r"THIS OPTION CURRENTLY IS SWITCHED OFF\s*DO YOU WANT TO SWITCH IT ON \(y\/n\)\?"
+    pop_method_submenu = r"YOU MAY CHOOSE BETWEEN:"
+    pop_list_submenu = r"YOU MAY CHOOSE:"
+
+    # Enable population analysis
+    process.sendline("prop")
+    process.expect(prop_submenu)
+    process.sendline("pop")
+    process.expect(pop_question)
+    process.sendline("y")
+    process.expect(pop_method_submenu)
+
+    if pop_method in ["mul", "low", "nbo", "pab", "wbi", "all"]:
+        process.sendline(params["method"])
+        process.expect(pop_list_submenu)
+    else:
+        raise RuntimeError("Unknown Population Analysis method '{}'".format(pop_method))
+
+    # Exit pop menu
+    process.sendline("*")
+    # Exit prop menu
+    process.sendline("*")
+
 def configure_calc_params(process: pexpect.spawn, params: Dict[str, Any]):
     headline = r"GENERAL MENU : SELECT YOUR TOPIC"
     end_of_prompt = r"\* or q\s*: END OF DEFINE SESSION"
@@ -663,6 +695,8 @@ def configure_calc_params(process: pexpect.spawn, params: Dict[str, Any]):
             process.expect(headline)
         elif current == "x2c":
             configure_x2c_parameter(process, params=calc_params[current])
+        elif current == "pop_analysis":
+            configure_pop_parameter(process, params=calc_params[current])
         elif current == "cosmo":
             # ignore here
             continue
@@ -928,6 +962,8 @@ def expand_param_shortcuts(params: Dict[str, Any]) -> Dict[str, Any]:
             calc_options["ri"] = {"type": calc_options["ri"]}
         if "x2c" in calc_options and type(calc_options["x2c"]) is bool:
             calc_options["x2c"] = {"enable": calc_options["x2c"]}
+        if "pop_analysis" in calc_options and type(calc_options["pop_analysis"]) is bool:
+            calc_options["pop_analysis"] = {"enable": calc_options["pop_analysis"]}
         if "cosmo" in calc_options and type(calc_options["cosmo"]) is bool:
             calc_options["cosmo"] = {"enable": calc_options["cosmo"]}
         if "cosmo" in calc_options and "enable" not in calc_options["cosmo"]:
