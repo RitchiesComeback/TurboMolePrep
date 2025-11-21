@@ -623,7 +623,7 @@ def configure_pop_parameter(process: pexpect.spawn, params: Dict[str, Any]):
     if not params.get("enable", False):
         return
 
-    pop_method: str = params.get("method").lower().replace(" ", "")
+    pop_method: str = params.get("method", "nbo").lower().replace(" ", "")
 
     prop_submenu = r"CURRENT STATUS OF PROPERTY KEYWORDS:"
     pop_question = r"THIS OPTION CURRENTLY IS SWITCHED OFF\s*DO YOU WANT TO SWITCH IT ON \(y\/n\)\?"
@@ -639,7 +639,7 @@ def configure_pop_parameter(process: pexpect.spawn, params: Dict[str, Any]):
     process.expect(pop_method_submenu)
 
     if pop_method in ["mul", "low", "nbo", "pab", "wbi", "all"]:
-        process.sendline(params["method"])
+        process.sendline(pop_method)
         process.expect(pop_list_submenu)
     else:
         raise RuntimeError("Unknown Population Analysis method '{}'".format(pop_method))
